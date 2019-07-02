@@ -1,0 +1,5 @@
+{
+  // プリセットを使用して、ES6 ~ を ES5 に変換
+  // 今回は React と TypeScript が対象のため、専用のプリセットも追加
+  "presets": ["@babel/preset-env", "@babel/react", "@babel/typescript"]
+}
