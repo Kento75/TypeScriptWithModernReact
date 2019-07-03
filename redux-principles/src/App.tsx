@@ -7,7 +7,7 @@ function App(): JSX.Element {
     <Fragment>
       {console.log(store)}
       <h1>Rick and Morty</h1>
-      <p>Pick your favorite </p>
+      <p>Pick your favorite episode!!</p>
     </Fragment>
   );
 }
