@@ -1,19 +1,6 @@
 import React, {Fragment, useContext} from 'react';
 import {Store} from './Store';
-
-interface IEpisode {
-  airdate: string;
-  airstamp: string;
-  airtime: string;
-  id: number;
-  image: {medium: string; original: string};
-  name: string;
-  number: number;
-  runtime: number;
-  season: number;
-  summary: string;
-  url: string;
-}
+import {IEpisode, IAction} from './interfaces';
 
 function App(): JSX.Element {
   const {state, dispatch} = useContext(Store);
@@ -34,12 +21,34 @@ function App(): JSX.Element {
     });
   };
 
+  const toggleFavAction = (episode: IEpisode): IAction => {
+    const episodeInFav = state.favourites.includes(episode);
+    let dispatchObj = {
+      type: 'ADD_FAV',
+      payload: episode,
+    };
+
+    if (episodeInFav) {
+      const favWithoutEpisode = state.favourites.filter(
+        (fav: IEpisode) => fav.id !== episode.id
+      );
+      dispatchObj = {
+        type: 'REMOVE_FAV',
+        payload: favWithoutEpisode,
+      };
+    }
+
+    return dispatch(dispatchObj);
+  };
   console.log(state);
   return (
     <Fragment>
       <header className="header">
-        <h1>Rick and Morty</h1>
-        <p>Pick your favorite episode!!</p>
+        <div>
+          <h1>Rick and Morty</h1>
+          <p>Pick your favorite episode!!</p>
+        </div>
+        <div>favourites(s): {state.favourites.length}</div>
       </header>
       <section className="episode-layout">
         {state.episodes.map(
@@ -53,7 +62,17 @@ function App(): JSX.Element {
                 />
                 <div>{episode.name}</div>
                 <section>
-                  Seasion: {episode.season} Number: {episode.number}
+                  <div>
+                    Seasion: {episode.season} Number: {episode.number}
+                  </div>
+                  <button
+                    type="submit"
+                    onClick={() => toggleFavAction(episode)}
+                  >
+                    {state.favourites.find((fav: any) => fav.id === episode.id)
+                      ? 'Unfav'
+                      : 'Fav'}
+                  </button>
                 </section>
               </section>
             )
