@@ -2,6 +2,8 @@ import React, {Fragment, useContext} from 'react';
 import {Store} from './Store';
 import {IEpisode, IAction} from './interfaces';
 
+const EpisodeList = React.lazy<any>(() => import('./EpisodesList'));
+
 function App(): JSX.Element {
   const {state, dispatch} = useContext(Store);
 
@@ -40,6 +42,13 @@ function App(): JSX.Element {
 
     return dispatch(dispatchObj);
   };
+
+  const props = {
+    episodes: state.episodes,
+    toggleFavAction,
+    favourites: state.favourites,
+  };
+
   console.log(state);
   return (
     <Fragment>
@@ -50,34 +59,11 @@ function App(): JSX.Element {
         </div>
         <div>favourites(s): {state.favourites.length}</div>
       </header>
-      <section className="episode-layout">
-        {state.episodes.map(
-          (episode: IEpisode) =>
-            episode.image &&
-            episode.image.medium && (
-              <section key={episode.id} className="episode-box">
-                <img
-                  src={episode.image.medium}
-                  alt={`Rich and Mort ${episode.name}`}
-                />
-                <div>{episode.name}</div>
-                <section>
-                  <div>
-                    Seasion: {episode.season} Number: {episode.number}
-                  </div>
-                  <button
-                    type="submit"
-                    onClick={() => toggleFavAction(episode)}
-                  >
-                    {state.favourites.find((fav: any) => fav.id === episode.id)
-                      ? 'Unfav'
-                      : 'Fav'}
-                  </button>
-                </section>
-              </section>
-            )
-        )}
-      </section>
+      <React.Suspense fallback={<div>loading...</div>}>
+        <section className="episode-layout">
+          <EpisodeList {...props} />
+        </section>
+      </React.Suspense>
     </Fragment>
   );
 }
